@@ -1,0 +1,37 @@
+<!-- templates/view_pemeriksaan.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css"
+        rel="stylesheet"
+        />
+    </head>
+    <body>
+        {% if session.logged_in %}
+        <table class="table-fixed">
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td class="border border-slate-700 ...">{{ row[0] }}</td>
+                    <td class="border border-slate-700 ...">{{ row[1] }}</td>
+                    <td>
+                        <button 
+                        class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"    
+                        onclick="window.location='{{ url_for('view_data', id=row[0]) }}'"
+                        >
+                        Detail
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>
+        You need to log in to access this page. Please
+        <a href="/">login</a>.
+        </p>
+        {% endif %}
+    </body>
+</html>

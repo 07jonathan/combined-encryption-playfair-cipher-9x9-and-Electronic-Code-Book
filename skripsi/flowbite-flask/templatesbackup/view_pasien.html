@@ -1,0 +1,286 @@
+<!-- templates/view_pasien.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="/dist/output.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/css/output.css')}}"
+    />
+    <style>
+        /* Modal styling */
+        .floating-modal {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: white;
+          border: 1px solid #ccc;
+          padding: 20px;
+          z-index: 1000;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+  
+        .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 900;
+        }
+      </style>
+  </head>
+<body>
+    <table class="table-fixed">
+        <thead>
+        <tr>
+            <th class="border border-slate-600 ...">Nomor</th>
+            <th class="border border-slate-600 ...">Nama</th>
+            <th class="border border-slate-600 ...">Umur:</th>
+            <th class="border border-slate-600 ...">Alamat</th>
+            <th class="border border-slate-600 ...">Kontak</th>
+        </tr>
+        </thead>
+        {% for row in data %}
+        <tbody>
+        <tr>
+            <td class="border border-slate-700 ...">{{ row[0] }}</td>
+            <td class="border border-slate-700 ...">{{ row[1] }}</td>
+            <td class="border border-slate-700 ...">{{ row[2] }}</td>
+            <td class="border border-slate-700 ...">{{ row[3] }}</td>
+            <td class="border border-slate-700 ...">{{ row[4] }}</td>
+            <td class="border border-slate-700 ...">
+              {% if alex == 'resepsionis ' %}
+                  <button
+                      data-modal-target="authentication-modal"
+                      data-modal-toggle="authentication-modal"
+                      class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      type="button"
+                      onclick="openFloatingModal('{{ row[0] }}')"
+                  >
+                      Toggle modal
+                  </button>
+                  <button
+                      type="button"
+                      class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      onclick="deletePasien('{{ row[0] }}')"
+                  >
+                      Delete Obat
+                  </button>
+                  <button type="button"
+                  class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >lihat
+                  </button>
+                    
+                    
+              {% else %}
+                  <!-- Render some placeholder or alternative content for non-dokter users -->
+                  <span>No Access</span>
+              {% endif %}
+          </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+    <br>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Floating Modal -->
+    <div class="floating-modal" id="floating-modal">
+
+      <!-- Isi modal Anda disini -->
+      <!-- Main modal -->
+      <p>halooooooo</p>
+      <div style="height: 400px; overflow-y: auto;">
+      <form id="dataForm" action="{{ url_for('update_pasien') }}" method="post">
+        <div class="grid gap-4 mb-4 grid-cols-2">
+          
+          <div class="col-span-2 sm:col-span-1">
+          <label for="id">ID Pemeriksaan:</label>
+          <input type="text" id="id" name="id" readonly>
+          </div>
+        
+          <div class="grid">
+            <div class="col-span-2 sm:col-span-1">
+              <label
+                for="nama"
+                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >Nama</label
+              >
+              <input
+                type="text"
+                name="nama"
+                id="nama"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <label
+                for="umur"
+                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                >Umur</label
+              >
+              <input
+                type="text"
+                name="umur"
+                id="umur"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+          </div>
+            
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label
+              for="alamat"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >Alamat</label
+            >
+            <input
+              type="text"
+              name="alamat"
+              id="alamat"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+            />
+            
+          </div>
+
+          <div class="col-span-2 sm:col-span-1">
+            <label
+              for="kontak"
+              class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >Kontak</label
+            >
+            <input
+              type="text"
+              name="kontak"
+              id="kontak"
+              class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+            /> 
+          </div>
+          <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Default</button>
+           <button type="submit" id="submit">Simpan</button>
+          <button type="button" onclick="closeFloatingModal()">Tutup Modal</button>
+        </div>
+    </form>
+  </div>
+      <h3>Ini adalah modal mengambang</h3>
+      <button onclick="closeFloatingModal()">Tutup Modal</button>
+    </div>
+
+    <script>
+        function editPemeriksaan(id) {
+            // Menggunakan window.location.href untuk pindah ke halaman lain dengan menyertakan ID
+            window.location.href = 'halamanedit.html?id=' + id;
+        }
+    </script>
+    <script>
+        async function openFloatingModal(id) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("floating-modal").style.display = "block";
+        
+            // Retrieve data based on the selected ID
+            var selectedData = await fetchDataById(id);
+        
+            // Populate form fields with data
+            if (selectedData) {
+                document.getElementById("id").value = selectedData.id;
+                document.getElementById("nama").value = selectedData.nama;
+                document.getElementById("umur").value = selectedData.umur;
+                document.getElementById("alamat").value = selectedData.alamat;
+                document.getElementById("kontak").value = selectedData.kontak;
+                // Populate other form fields similarly
+            } else {
+                console.error('Failed to fetch data.');
+            }
+        }
+
+        async function fetchDataById(id) {
+            try {
+                const response = await fetch(`/get_pasien/${id}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+
+        async function deletePasien(id) {
+          if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+              try {
+                  const response = await fetch(`/delete_pasien/${id}`, {
+                      method: 'DELETE'
+                  });
+      
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+      
+                  // Handle the response as needed
+                  const responseData = await response.json();
+                  console.log(responseData);
+                  window.location.reload();
+      
+                  // Optionally, you can refresh the page or update the table
+                  // For example, you can use window.location.reload() to refresh the page
+              } catch (error) {
+                  console.error('Error deleting data:', error);
+              }
+          }
+      }
+    
+  
+        function closeFloatingModal() {
+          document.getElementById("overlay").style.display = "none";
+          document.getElementById("floating-modal").style.display = "none";
+        }
+  
+        document.getElementById("dataForm").addEventListener("submit", async function (event) {
+          event.preventDefault();
+      
+          // Retrieve form data
+          var formData = new FormData(event.target);
+      
+          // Send the form data to the server using fetch
+          try {
+              const response = await fetch(event.target.action, {
+                  method: 'POST',
+                  body: formData
+              });
+      
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+      
+              // Handle the response as needed
+              const responseData = await response.json();
+              console.log(responseData);
+              window.location.reload();
+      
+              // Optionally, you can perform additional actions (e.g., close the modal)
+              closeFloatingModal();
+          } catch (error) {
+              console.error('Error submitting form:', error);
+          }
+      });
+      
+  </script> 
+  
+</body>
+</html>

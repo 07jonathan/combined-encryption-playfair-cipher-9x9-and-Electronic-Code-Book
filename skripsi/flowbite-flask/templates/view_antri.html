@@ -1,0 +1,468 @@
+<!-- templates/view_pasien.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        /* Modal styling */
+        .floating-modal {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: white;
+          border: 1px solid #ccc;
+          padding: 20px;
+          z-index: 1000;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+  
+        .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 900;
+        }
+      </style>
+  </head>
+  <body>
+    {% if session.logged_in %}
+    <button 
+      type="button" 
+      class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      onclick="refresh()">Refresh
+    </button>
+      {% if role == 'dokter'%}
+      <table class="table-fixed">
+        <thead>
+          <tr>
+            <th class="border border-slate-600 ...">Nomor</th>
+            <th class="border border-slate-600 ...">Nama</th>
+            <th class="border border-slate-600 ...">Umur:</th>
+            <th class="border border-slate-600 ...">Alamat</th>
+            <th class="border border-slate-600 ...">Kontak</th>
+            <th class="border border-slate-600 ...">Action</th>
+          </tr>
+        </thead>
+        {% for row in data %}
+        <tbody>
+          <tr>
+            <td class="border border-slate-700 ...">{{ row[0] }}</td>
+            <td class="border border-slate-700 ...">{{ row[1] }}</td>
+            <td class="border border-slate-700 ...">{{ row[2] }}</td>
+            <td class="border border-slate-700 ...">{{ row[3] }}</td>
+            <td class="border border-slate-700 ...">{{ row[4] }}</td>
+            <td class="border border-slate-700 ...">
+              <button
+                class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+                data-id="{{ row[0] }}"
+                data-nama="{{ row[2] }}"
+                data-umur="{{ row[3] }}"
+                data-alamat="{{ row[4] }}"
+                data-kontak="{{ row[5] }}"
+                data-pasien="{{ row[6] }}"
+                onclick="redirectToPasien(this)"
+              >
+                Periksa
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </tabel>
+        {% endfor %}
+
+      {% elif role == 'apoteker' %}
+        <table class="table-fixed">
+          <thead>
+            <tr>
+              <th class="border border-slate-600 ...">Nomor</th>
+              <th class="border border-slate-600 ...">Nama Pasien</th>
+              <th class="border border-slate-600 ...">Nama Obat</th>
+              <th class="border border-slate-600 ...">Kategori</th>
+              <th class="border border-slate-600 ...">Bentuk</th>
+              <th class="border border-slate-600 ...">Dosis</th>
+              <th class="border border-slate-600 ...">Penggunaan</th>
+              <th class="border border-slate-600 ...">Action</th>
+            </tr>
+          </thead>
+          {% for row in data %}
+          <tbody>
+            <tr>
+              <td class="border border-slate-700 ...">{{ row[0] }}</td>
+              <td class="border border-slate-700 ...">{{ row[1] }}</td>
+              <td class="border border-slate-700 ...">{{ row[2] }}</td>
+              <td class="border border-slate-700 ...">{{ row[3] }}</td>
+              <td class="border border-slate-700 ...">{{ row[4] }}</td>
+              <td class="border border-slate-700 ...">{{ row[5] }}</td>
+              <td class="border border-slate-700 ...">{{ row[6] }}</td>
+              <td class="border border-slate-700 ...">
+                <button
+                    id="updateButton"
+                    class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    type="button"
+                    data-id="{{ row[0] }}"
+                    data-status="2"
+                    onclick="ubahNama({{ row[0] }})"
+                >
+                    Konfirmasi
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </tabel>
+          {% endfor %}
+
+
+      {% elif role == 'resepsionis ' %}
+        <table class="table-fixed">
+          <thead>
+            <tr>
+              <th class="border border-slate-600 ...">Nomor</th>
+              <th class="border border-slate-600 ...">Nama</th>
+              <th class="border border-slate-600 ...">Umur:</th>
+              <th class="border border-slate-600 ...">Alamat</th>
+              <th class="border border-slate-600 ...">Kontak</th>
+              <th class="border border-slate-600 ...">Action</th>
+            </tr>
+          </thead>
+          {% for row in data %}
+          <tbody>
+            <tr>
+              <td class="border border-slate-700 ...">{{ row[0] }}</td>
+              <td class="border border-slate-700 ...">{{ row[2] }}</td>
+              <td class="border border-slate-700 ...">{{ row[3] }}</td>
+              <td class="border border-slate-700 ...">{{ row[4] }}</td>
+              <td class="border border-slate-700 ...">{{ row[5] }}</td>
+              <td class="border border-slate-700 ...">
+      
+                <div>   
+                  <button
+                    data-modal-target="authentication-modal"
+                    data-modal-toggle="authentication-modal"
+                    class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    type="button"
+                    onclick="openFloatingModal('{{ row[0] }}')"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    onclick="deleteData('{{ row[0] }}')"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </tabel>
+          {% endfor %}
+      {% endif %}
+
+    {% else %}
+    <!-- If the user is not logged in, display a message or redirect to the login page -->
+    <p>
+      You need to log in to access this page. Please
+      <a href="/">login</a>.
+    </p>
+    {% endif %}
+    <br>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Floating Modal -->
+    <div class="floating-modal" id="floating-modal">
+      <div style="height: 620px; width:420px; overflow-y: auto;">
+        <form id="dataForm" action="{{ url_for('update_data') }}" method="post">
+          <div class="grid gap-4 mb-4">
+            <div class="grid">
+              <input type="text" 
+                id="id" 
+                name="id" 
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                readonly
+              >
+
+              <input type="text" 
+                id="id_pasien" 
+                name="id_pasien" 
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              >
+                
+              <input
+                type="text"
+                name="nama"
+                id="nama"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              <input
+                type="text"
+                name="umur"
+                id="umur"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              <input
+                type="text"
+                name="alamat"
+                id="alamat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              <input
+                type="text"
+                name="kontak"
+                id="kontak"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              
+              <input
+                type="text"
+                name="tanggal"
+                id="tanggal"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              
+              <input
+                type="text"
+                name="rencana"
+                id="rencana"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              >
+              
+              <input
+                type="text"
+                name="evaluasi"
+                id="evaluasi"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                value = " "
+              >
+              
+              <input
+                type="text"
+                name="riwayat"
+                id="riwayat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              >
+
+              <input
+                type="text"
+                name="tes"
+                id="tes"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              >
+
+              <input
+                type="text"
+                name="pencitraan"
+                id="pencitraan"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              >
+
+              <input
+                type="text"
+                name="namaobat"
+                id="namaobat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+
+              <input
+                type="text"
+                name="kategoriobat"
+                id="kategoriobat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              
+              <input
+                type="text"
+                name="bentukobat"
+                id="bentukobat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              
+              <input
+                type="text"
+                name="dosisobat"
+                id="dosisobat"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+              
+              <input
+                type="text"
+                name="carapenggunaan"
+                id="carapenggunaan"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                readonly
+              >
+
+              <button type="submit" id="submit">Simpan</button>
+              <button type="button" onclick="closeFloatingModal()">Tutup Modal</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      async function openFloatingModal(id) {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("floating-modal").style.display = "block";
+        
+        var selectedData = await fetchDataById(id);
+        if (selectedData) {
+            document.getElementById("id").value = selectedData.id;
+            document.getElementById("id_pasien").value = selectedData.id_pasien;
+            document.getElementById("tes").value = selectedData.tes;
+            document.getElementById("nama").value = selectedData.nama;
+            document.getElementById("umur").value = selectedData.umur;
+            document.getElementById("alamat").value = selectedData.alamat;
+            document.getElementById("kontak").value = selectedData.kontak;
+            document.getElementById("tanggal").value = selectedData.tanggal;
+            document.getElementById("rencana").value = selectedData.rencana;
+            document.getElementById("evaluasi").value = selectedData.evaluasi;
+            document.getElementById("riwayat").value = "x";
+            document.getElementById("pencitraan").value = selectedData.pencitraan;
+            document.getElementById("namaobat").value = selectedData.namaobat;
+            document.getElementById("kategoriobat").value = selectedData.kategoriobat;
+            document.getElementById("bentukobat").value = selectedData.bentukobat;
+            document.getElementById("dosisobat").value = selectedData.dosisobat;
+            document.getElementById("carapenggunaan").value = selectedData.carapenggunaan;
+          } 
+        else {
+          console.error('Failed to fetch data.');
+        }
+      }
+    
+      async function fetchDataById(id) {
+        try {
+          const response = await fetch(`/get_data/${id}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          return null;
+        }
+      }
+    
+      async function deleteData(id) {
+        if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+          try {
+            const response = await fetch(`/delete_data/${id}`, {
+              method: 'DELETE'
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const responseData = await response.json();
+            console.log(responseData);
+            window.location.reload();
+          } catch (error) {
+            console.error('Error deleting data:', error);
+          }
+        }
+      }
+    
+      function closeFloatingModal() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("floating-modal").style.display = "none";
+      }
+    
+      document.getElementById("dataForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        
+        var formData = new FormData(event.target);
+        try {
+          const response = await fetch(event.target.action, {
+            method: 'POST',
+            body: formData
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const responseData = await response.json();
+          console.log(responseData);
+          window.location.reload();
+          closeFloatingModal();
+        } 
+        catch (error) {
+        console.error('Error submitting form:', error);
+        }
+      });
+    </script>
+    <script>
+      function redirectToPasien(button) {
+        var id = button.getAttribute("data-id");
+        var nama = button.getAttribute("data-nama");
+        var umur = button.getAttribute("data-umur");
+        var alamat = button.getAttribute("data-alamat");
+        var kontak = button.getAttribute("data-kontak");
+        var pasien = button.getAttribute("data-pasien");
+
+        window.location.href = "/pasien?id=" + id + "&nama=" + nama + "&umur=" + umur + "&alamat=" + alamat + "&kontak=" + kontak + "&pasien=" + pasien;
+      }
+      
+    </script>
+    
+    <script>
+      function ubahNama(id) {
+        var nama_baru = "3";
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ubah_nama", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            location.reload();
+          } else {
+            console.error("Gagal mengubah nama.");
+          }
+        };
+        xhr.send(JSON.stringify({ id: id, nama_baru: nama_baru }));
+      }
+    </script>
+    <script>
+      function refresh() {
+        window.location.href = '/view_antri';
+      }
+    </script>
+  </body>
+</html>

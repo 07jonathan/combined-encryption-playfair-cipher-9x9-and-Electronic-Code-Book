@@ -1,0 +1,66 @@
+<!-- templates/view_data.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="/dist/output.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css"
+      rel="stylesheet"
+    />
+  </head>
+<body>
+    <table class="border-separate border border-slate-500 ...">
+        <thead>
+        <tr>
+            <th class="border border-slate-600 ...">id pemeriksaan</th>
+            <th class="border border-slate-600 ...">Nama</th>
+            <th class="border border-slate-600 ...">Umur:</th>
+            <th class="border border-slate-600 ...">Alamat</th>
+            <th class="border border-slate-600 ...">Kontak</th>
+            <th class="border border-slate-600 ...">Tanggal</th>
+            <th class="border border-slate-600 ...">Catatan</th>
+            <th class="border border-slate-600 ...">Rencana</th>
+            <th class="border border-slate-600 ...">Evaluasi</th>
+            <th class="border border-slate-600 ...">Riwayat</th>
+            <th class="border border-slate-600 ...">Rekam</th>
+            <th class="border border-slate-600 ...">Tes</th>
+            <th class="border border-slate-600 ...">Pencitraan</th>
+            <th class="border border-slate-600 ...">Nama Obat</th>
+            <th class="border border-slate-600 ...">Kategori Obat</th>
+            <th class="border border-slate-600 ...">Bentuk Obat</th>
+            <th class="border border-slate-600 ...">Dosis Obat</th>
+            <th class="border border-slate-600 ...">Cara Penggunaan</th>
+        </tr>
+        </thead>
+        {% for row in data %}
+        <tbody>
+        <tr>
+            <td class="border border-slate-700 ...">{{ row[0] }}</td>
+            <td class="border border-slate-700 ...">{{ row[2] }}</td>
+            <td class="border border-slate-700 ...">{{ row[3] }}</td>
+            <td class="border border-slate-700 ...">{{ row[4] }}</td>
+            <td class="border border-slate-700 ...">{{ row[5] }}</td>
+            <td class="border border-slate-700 ...">{{ row[6] }}</td>
+            <td class="border border-slate-700 ...">{{ row[7] }}</td>
+            <td class="border border-slate-700 ...">{{ row[8] }}</td>
+            <td class="border border-slate-700 ...">{{ row[9] }}</td>
+            <td class="border border-slate-700 ...">{{ row[10] }}</td>
+            <td class="border border-slate-700 ...">{{ row[11] }}</td>
+            <td class="border border-slate-700 ...">{{ row[12] }}</td>
+            <td class="border border-slate-700 ...">{{ row[13] }}</td>
+            <td class="border border-slate-700 ...">{{ row[15] }}</td>
+            <td class="border border-slate-700 ...">{{ row[16] }}</td>
+            <td class="border border-slate-700 ...">{{ row[17] }}</td>
+            <td class="border border-slate-700 ...">{{ row[18] }}</td>
+            <td class="border border-slate-700 ...">{{ row[19] }}</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+    <br>
+</body>
+</html>
